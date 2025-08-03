@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="mode_light">Light</string>
+    <string name="mode_dark">Dark</string>
+    <string name="theme">Theme</string>
+</resources>

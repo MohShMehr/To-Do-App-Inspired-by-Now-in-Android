@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+option java_package = "morz.example.archtemplate";
+option java_multiple_files = true;
+
+message UserSettings {
+    bool dark_mode = 1;
+}
