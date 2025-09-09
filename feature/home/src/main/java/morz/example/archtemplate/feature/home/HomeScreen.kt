@@ -1,15 +1,11 @@
 package morz.example.archtemplate.feature.home
 
 import android.annotation.SuppressLint
-import android.service.quicksettings.Tile
 import android.widget.Toast
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,11 +13,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -50,17 +44,17 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import morz.example.archtemplate.core.designsystem.R
 import morz.example.archtemplate.core.designsystem.component.AppBottomSheet
 import morz.example.archtemplate.core.designsystem.component.AppLoadingView
+import morz.example.archtemplate.core.designsystem.component.TabsView
+import morz.example.archtemplate.core.designsystem.component.rememberTabsViewState
 import morz.example.archtemplate.core.designsystem.theme.AppTheme
 import morz.example.archtemplate.core.model.ToDo
 import morz.example.archtemplate.core.ui.DevicePreviews
-import kotlin.random.Random
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -99,8 +93,8 @@ internal fun HomeRoute(
         onUpdateClick = {
             showBottomSheet = false
             onUpdateClick(it)
-        },
-        )
+        }
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -115,6 +109,8 @@ internal fun HomeScreen(
     itemIdToAct: Int,
     onUpdateClick: (String) -> Unit
 ) {
+
+    val tabsState = rememberTabsViewState(0)
 
     if (showBottomSheet) {
         ActionsBottomSheet(
@@ -132,10 +128,19 @@ internal fun HomeScreen(
         }
 
         is HomeUiState.Success -> {
-            Box(
+            Column(
                 modifier = Modifier.fillMaxSize()
             ) {
-                ToDoGrid(homeUiState.homeData.data, onItemClick, modifier)
+                TabsView(
+                    state = tabsState,
+                    titles = listOf("List", "Grid")
+                )
+
+                when (tabsState.selectedTabIndex) {
+                    0 -> ToDoList(homeUiState.homeData.data, onItemClick, modifier)
+                    1 -> ToDoGrid(homeUiState.homeData.data, onItemClick, modifier)
+                }
+
             }
         }
 
@@ -184,23 +189,24 @@ fun ToDoGrid(
     }
 
     LazyVerticalStaggeredGrid(
-        columns = StaggeredGridCells.Adaptive(columnWidth),
-        contentPadding = PaddingValues(4.dp),
+        columns = StaggeredGridCells.Adaptive(150.dp),
         verticalItemSpacing = 4.dp,
-        horizontalArrangement = Arrangement.spacedBy(4.dp)
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        content = {
+            items(todos.size) { index ->
+
+                ToDoGridItem(
+                    todo = todos[index],
+                    onItemClick = onItemClick,
+                    modifier = modifier
+                        .fillMaxWidth()
+                        .padding(4.dp)
+                        .wrapContentHeight(),
+                )
+            }
+        },
+        modifier = Modifier.fillMaxSize()
     )
-    {
-        items(
-            todos.size,
-            { index -> todos[index].id ?: 0 }
-        ) { index ->
-            ToDoGridItem(
-                todo = todos[index],
-                onItemClick = onItemClick,
-                modifier = modifier,
-            )
-        }
-    }
 }
 
 @Composable
@@ -255,11 +261,9 @@ fun ToDoGridItem(
     modifier: Modifier = Modifier,
     todo: ToDo,
     onItemClick: (Int) -> Unit,
-){
+) {
     Card(
         modifier = modifier
-            .wrapContentSize()
-            .padding(16.dp)
             .clickable { onItemClick(todo.id!!) },
         shape = RoundedCornerShape(12.dp),
         elevation = CardDefaults.cardElevation(8.dp)
@@ -269,7 +273,7 @@ fun ToDoGridItem(
                 .wrapContentSize()
                 .padding(16.dp),
             horizontalAlignment = Alignment.Start
-        ){
+        ) {
 
             Text(
                 text = "To Do #${todo.id}",
