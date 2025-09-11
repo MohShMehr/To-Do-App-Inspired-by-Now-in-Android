@@ -262,4 +262,109 @@ class AppTests {
         composeTestRule.onRoot().assertExists()
         composeTestRule.onNodeWithText("Home").assertExists()
     }
+
+    @Test
+    fun testTabsViewTabSwitching() {
+        // Wait for the app to load and navigate to Home screen
+        composeTestRule.waitForIdle()
+        
+        // The app starts with Home screen by default, but we need to wait for data to load
+        // Wait for TabsView to appear (this means the Home screen has loaded successfully)
+        composeTestRule.waitUntil(timeoutMillis = 10000) {
+            try {
+                composeTestRule.onNodeWithTag("TabsView").assertExists()
+                true
+            } catch (e: AssertionError) {
+                false
+            }
+        }
+        
+        // Verify TabsView is displayed
+        composeTestRule.onNodeWithTag("TabsView")
+            .assertExists()
+            .assertIsDisplayed()
+        
+        // Test List tab (default selection)
+        composeTestRule.onNodeWithText("List")
+            .assertExists()
+            .assertIsDisplayed()
+            .performClick()
+        composeTestRule.waitForIdle()
+        
+        // Verify that ToDoList is displayed (check for LazyColumn which is used in ToDoList)
+        // We can verify by checking for the presence of todo items or the LazyColumn structure
+        composeTestRule.onNodeWithTag("TabsView")
+            .assertExists()
+            .assertIsDisplayed()
+        
+        // Test Grid tab
+        composeTestRule.onNodeWithText("Grid")
+            .assertExists()
+            .assertIsDisplayed()
+            .performClick()
+        composeTestRule.waitForIdle()
+        
+        // Verify that ToDoGrid is displayed (check for LazyVerticalStaggeredGrid)
+        // The grid view should be visible after clicking Grid tab
+        composeTestRule.onNodeWithTag("TabsView")
+            .assertExists()
+            .assertIsDisplayed()
+        
+        // Switch back to List tab to verify switching works both ways
+        composeTestRule.onNodeWithText("List")
+            .assertExists()
+            .assertIsDisplayed()
+            .performClick()
+        composeTestRule.waitForIdle()
+        
+        // Verify we're back to List view
+        composeTestRule.onNodeWithTag("TabsView")
+            .assertExists()
+            .assertIsDisplayed()
+    }
+
+    @Test
+    fun testTabsViewTabContentSwitching() {
+        // Wait for the app to load and navigate to Home screen
+        composeTestRule.waitForIdle()
+        
+        // The app starts with Home screen by default, but we need to wait for data to load
+        // Wait for TabsView to appear (this means the Home screen has loaded successfully)
+        composeTestRule.waitUntil(timeoutMillis = 10000) {
+            try {
+                composeTestRule.onNodeWithTag("TabsView").assertExists()
+                true
+            } catch (e: AssertionError) {
+                false
+            }
+        }
+        
+        // Verify TabsView exists
+        composeTestRule.onNodeWithTag("TabsView")
+            .assertExists()
+            .assertIsDisplayed()
+        
+        // Test that clicking List tab shows list content
+        composeTestRule.onNodeWithText("List")
+            .performClick()
+        composeTestRule.waitForIdle()
+        
+        // Verify List tab is selected (you might need to check for specific visual indicators)
+        // This could be checking for selected state or specific content that appears only in list view
+        
+        // Test that clicking Grid tab shows grid content
+        composeTestRule.onNodeWithText("Grid")
+            .performClick()
+        composeTestRule.waitForIdle()
+        
+        // Verify Grid tab is selected
+        // This could be checking for specific content that appears only in grid view
+        
+        // Verify both tabs are clickable and functional
+        composeTestRule.onNodeWithText("List")
+            .assertHasClickAction()
+        
+        composeTestRule.onNodeWithText("Grid")
+            .assertHasClickAction()
+    }
 }

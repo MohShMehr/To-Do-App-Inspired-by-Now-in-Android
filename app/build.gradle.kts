@@ -11,7 +11,7 @@ android {
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "morz.example.archtemplate"
+        applicationId = "morz.example.archtemplate.todo"
         minSdk = 24
         targetSdk = 36
         versionCode = 1
