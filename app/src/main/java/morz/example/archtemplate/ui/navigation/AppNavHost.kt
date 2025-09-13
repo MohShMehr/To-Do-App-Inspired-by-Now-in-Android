@@ -4,6 +4,7 @@ package morz.example.archtemplate.ui.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
+import com.android.search.navigation.searchScreen
 import morz.example.archtemplate.feature.home.navigation.homeNavigationRoute
 import morz.example.archtemplate.feature.home.navigation.homeScreen
 import morz.example.archtemplate.feature.login.navigation.loginScreen
@@ -34,6 +35,7 @@ fun AppNavHost(
         workScreen()
         profileScreen()
         settingScreen()
+        searchScreen()
         supportScreen()
         toDoDetailScreen()
     }

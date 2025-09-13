@@ -64,4 +64,5 @@ internal val Teal40 = Color(0xFF3A656F)
 internal val Teal80 = Color(0xFFA2CED9)
 internal val Teal90 = Color(0xFFBEEAF6)
 
-internal val TopBarColor = Color(0xFF58595B)
+val TopBarColor = Color(0xFF58595B)
+val ColorFF6B6B = Color(0xFFFF6B6B)

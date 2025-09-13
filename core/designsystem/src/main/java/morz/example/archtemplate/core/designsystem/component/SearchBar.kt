@@ -31,6 +31,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import morz.example.archtemplate.core.designsystem.theme.ColorFF6B6B
 import morz.example.archtemplate.core.designsystem.theme.ThemePreviews
 
 @Composable
@@ -41,7 +42,7 @@ fun SearchBar(
     onSearch: () -> Unit = {},
     placeholder: String = "Search...",
     enabled: Boolean = true,
-    iconBackGround: Color = Color.Transparent
+    iconBackground: Color = Color.Transparent
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -103,7 +104,7 @@ fun SearchBar(
                 modifier = Modifier
                     .size(32.dp)
                     .clip(CircleShape)
-                    .background(iconBackGround) // Coral color
+                    .background(iconBackground) // Coral color
             ) {
                 Icon(
                     imageVector = Icons.Default.Search,
@@ -129,7 +130,7 @@ private fun SearchBarPreview() {
             query = "",
             onQueryChange = {},
             onSearch = {},
-            iconBackGround = Color(0xFFFF6B6B)
+            iconBackground = ColorFF6B6B
         )
     }
 }
@@ -147,7 +148,7 @@ private fun SearchBarWithTextPreview() {
             query = "Sample search",
             onQueryChange = {},
             onSearch = {},
-            iconBackGround = Color(0xFFFF6B6B)
+            iconBackground = ColorFF6B6B
         )
     }
 }

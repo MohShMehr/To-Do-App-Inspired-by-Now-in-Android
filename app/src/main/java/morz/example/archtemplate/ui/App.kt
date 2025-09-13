@@ -14,6 +14,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import com.android.search.navigation.searchNavigationRoute
 import morz.example.archtemplate.R
 import morz.example.archtemplate.core.designsystem.component.AppTopAppBar
 import morz.example.archtemplate.feature.setting.navigation.settingNavigationRoute
@@ -31,7 +32,7 @@ fun App(
     Scaffold(
         topBar = {
             AnimatedVisibility(
-                visible = appState.currentDestination?.route != supportNavigationRoute,
+                visible = appState.currentDestination?.route != searchNavigationRoute,
                 enter = slideInVertically(
                     initialOffsetY = { -it },
                     animationSpec = tween(durationMillis = 300)
@@ -52,7 +53,7 @@ fun App(
                     actionIcon = R.drawable.ic_search,
                     actionIconContentDescription = "App TopAppBar action icon avatar",
                     onNavigationClick = { appState.navigateToRoute(settingNavigationRoute) },
-                    onActionClick = { appState.navigateToRoute(supportNavigationRoute) }
+                    onActionClick = { appState.navigateToRoute(searchNavigationRoute) }
                 )
             }
         },
