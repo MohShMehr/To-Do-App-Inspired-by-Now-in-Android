@@ -45,4 +45,6 @@ dependencies {
     implementation(libs.coil.kt.compose)
 
     testImplementation(libs.junit)
+    debugImplementation(libs.androidx.ui.tooling)
+    debugImplementation(libs.androidx.ui.test.manifest)
 }
