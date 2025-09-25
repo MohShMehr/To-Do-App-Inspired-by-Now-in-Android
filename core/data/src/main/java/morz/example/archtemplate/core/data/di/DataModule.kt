@@ -6,6 +6,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import morz.example.archtemplate.core.data.repository.DefaultToDoRepository
 import morz.example.archtemplate.core.data.repository.DefaultUserDataRepository
+import morz.example.archtemplate.core.domain.SearchContentsRepository
 import morz.example.archtemplate.core.domain.ToDoRepository
 import morz.example.archtemplate.core.domain.UserDataRepository
 
@@ -22,4 +23,9 @@ interface DataModule {
     fun bindsToDoRepository(
         defaultToDoRepository: DefaultToDoRepository
     ): ToDoRepository
+
+    @Binds
+    fun bindsSearchContentsRepository(
+        defaultToDoRepository: DefaultToDoRepository
+    ): SearchContentsRepository
 }
