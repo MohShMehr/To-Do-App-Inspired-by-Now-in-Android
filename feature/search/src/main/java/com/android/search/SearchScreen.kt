@@ -8,16 +8,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import morz.example.archtemplate.core.designsystem.component.SearchBar
+import morz.example.archtemplate.core.designsystem.theme.AppTheme
 import morz.example.archtemplate.core.designsystem.theme.ColorFF6B6B
 
 @Composable
@@ -25,13 +24,23 @@ internal fun SearchRoute(
     modifier: Modifier = Modifier,
     viewModel: SearchViewModel = hiltViewModel()
 ) {
-    SearchScreen()
+    val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
+    val searchResultUiState by viewModel.searchResultUiState.collectAsStateWithLifecycle()
+
+    SearchScreen(
+        searchQuery = searchQuery,
+        onSearchQueryChanged = viewModel::onSearchQueryChanged,
+        searchResultUiState = searchResultUiState
+    )
 }
 
 @Composable
 internal fun SearchScreen(
+    modifier: Modifier = Modifier,
+    searchQuery: String = "",
+    onSearchQueryChanged: (String) -> Unit = {},
+    searchResultUiState: SearchResultUiState = SearchResultUiState.Loading,
 ) {
-    var searchQuery by remember { mutableStateOf("") }
 
     Box(
         modifier = Modifier
@@ -45,21 +54,34 @@ internal fun SearchScreen(
         ) {
             SearchBar(
                 query = searchQuery,
-                onQueryChange = { searchQuery = it },
+                onQueryChange = onSearchQueryChanged,
                 onSearch = {
                 },
                 modifier = Modifier.padding(bottom = 16.dp),
                 iconBackground = ColorFF6B6B
             )
+            when (searchResultUiState) {
+                SearchResultUiState.Loading,
+                SearchResultUiState.LoadFailed,
+                    -> Unit
+                SearchResultUiState.SearchNotReady -> Unit
+                SearchResultUiState.EmptyQuery,
+                    -> Unit
+                is SearchResultUiState.Success -> {
+                    if (searchResultUiState.isEmpty()) {
 
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "Support",
-                    color = Color.White
-                )
+                    }else{
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = searchResultUiState.todos.toString(),
+                                color = Color.Red
+                            )
+                        }
+                    }
+                }
             }
         }
     }
@@ -68,5 +90,7 @@ internal fun SearchScreen(
 @Preview
 @Composable
 private fun SearchScreenPreview() {
-    SearchScreen()
+    AppTheme {
+        SearchScreen()
+    }
 }

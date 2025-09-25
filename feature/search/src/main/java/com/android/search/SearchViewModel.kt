@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
@@ -29,6 +30,7 @@ class SearchViewModel @Inject constructor(
     toDoRepository: ToDoRepository
 ) : ViewModel() {
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     val searchResultUiState: StateFlow<SearchResultUiState> =
         (toDoRepository as SearchContentsRepository).getSearchContentsCount()
             .flatMapLatest { totalCount ->
