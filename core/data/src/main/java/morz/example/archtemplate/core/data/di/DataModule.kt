@@ -21,11 +21,11 @@ interface DataModule {
 
     @Binds
     fun bindsToDoRepository(
-        defaultToDoRepository: DefaultToDoRepository
+        defaultToDoRepository: DefaultToDoRepository,
     ): ToDoRepository
 
     @Binds
-    fun bindsSearchContentsRepository(
+    fun bindSearchContentsRepository(
         defaultToDoRepository: DefaultToDoRepository
     ): SearchContentsRepository
 }

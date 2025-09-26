@@ -75,8 +75,13 @@ internal fun SearchScreen(
                             modifier = Modifier.fillMaxSize(),
                             contentAlignment = Alignment.Center
                         ) {
+                            val prettyText = searchResultUiState.todos.joinToString(
+                                separator = "\n",
+                                prefix = "• ",
+                                transform = { "• $it" }
+                            )
                             Text(
-                                text = searchResultUiState.todos.toString(),
+                                text = prettyText,
                                 color = Color.Red
                             )
                         }

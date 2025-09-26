@@ -5,16 +5,19 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import morz.example.archtemplate.core.domain.GetSearchContentsUseCase
 import morz.example.archtemplate.core.domain.SearchContentsRepository
-import morz.example.archtemplate.core.domain.ToDoRepository
 import morz.example.archtemplate.core.model.SearchResult
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
@@ -27,39 +30,52 @@ private const val SEARCH_MIN_FTS_ENTITY_COUNT = 1
 class SearchViewModel @Inject constructor(
     getSearchContentsUseCase: GetSearchContentsUseCase,
     private val savedStateHandle: SavedStateHandle,
-    toDoRepository: ToDoRepository
+    searchContentsRepository: SearchContentsRepository
 ) : ViewModel() {
 
-    @OptIn(ExperimentalCoroutinesApi::class)
+    @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
     val searchResultUiState: StateFlow<SearchResultUiState> =
-        (toDoRepository as SearchContentsRepository).getSearchContentsCount()
+        searchContentsRepository.getSearchContentsCount()
             .flatMapLatest { totalCount ->
                 if (totalCount < SEARCH_MIN_FTS_ENTITY_COUNT) {
                     flowOf(SearchResultUiState.SearchNotReady)
                 } else {
-                    searchQuery.flatMapLatest { query ->
-                        if (query.trim().length < SEARCH_QUERY_MIN_LENGTH) {
-                            flowOf(SearchResultUiState.EmptyQuery)
-                        } else {
-                            getSearchContentsUseCase(query)
-                                .map<SearchResult, SearchResultUiState> { data ->
-                                    SearchResultUiState.Success(
-                                        todos = data.todos
-                                    )
+                    // normalize + avoid duplicate emissions
+                    searchQuery
+                        .map { it.trim() }
+                        .distinctUntilChanged()
+                        .debounce(250) // optional but recommended for typing
+                        .flatMapLatest { trimmed ->
+                            flow<SearchResultUiState> {
+                                if (trimmed.length < SEARCH_QUERY_MIN_LENGTH) {
+                                    emit(SearchResultUiState.EmptyQuery)
+                                } else {
+                                    try {
+                                        emit(SearchResultUiState.Loading)
+                                        emitAll(
+                                            getSearchContentsUseCase(trimmed)
+                                                .map<SearchResult, SearchResultUiState> { data ->
+                                                    SearchResultUiState.Success(todos = data.todos)
+                                                }
+                                        )
+                                    } catch (t: Throwable) {
+                                        emit(SearchResultUiState.LoadFailed)
+                                    }
                                 }
-                                .catch { emit(SearchResultUiState.LoadFailed) }
+                            }
                         }
-                    }
                 }
-            }.stateIn(
+            }
+            .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5.seconds.inWholeMilliseconds),
                 initialValue = SearchResultUiState.Loading,
             )
 
-    val searchQuery = savedStateHandle.getStateFlow(key = SEARCH_QUERY, initialValue = "")
+    val searchQuery: StateFlow<String> =
+        savedStateHandle.getStateFlow(key = SEARCH_QUERY, initialValue = "")
 
     fun onSearchQueryChanged(query: String) {
-        savedStateHandle[SEARCH_QUERY] = query
+        if (query != searchQuery.value) savedStateHandle[SEARCH_QUERY] = query
     }
 }

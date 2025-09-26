@@ -14,8 +14,10 @@ import morz.example.archtemplate.core.network.model.toDo.NetworkToDoResponse
 import morz.example.archtemplate.core.network.util.APiHelper.safeApiCall
 import morz.example.archtemplate.core.network.util.ApiResult
 import javax.inject.Inject
+import javax.inject.Singleton
 import kotlin.time.Duration.Companion.minutes
 
+@Singleton
 class DefaultToDoRepository @Inject constructor(
     private val toDoApi: ToDoApi
 ) : ToDoRepository, SearchContentsRepository {
