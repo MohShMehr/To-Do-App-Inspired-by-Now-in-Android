@@ -57,6 +57,7 @@ dependencies {
     implementation(project(":feature:setting"))
     implementation(project(":feature:support"))
     implementation(project(":feature:tododetail"))
+    implementation(project(":feature:search"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
