@@ -6,7 +6,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -48,7 +47,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import morz.example.archtemplate.core.designsystem.R
 import morz.example.archtemplate.core.designsystem.component.AppBottomSheet
 import morz.example.archtemplate.core.designsystem.component.AppLoadingView
 import morz.example.archtemplate.core.designsystem.component.TabsView
@@ -56,6 +54,8 @@ import morz.example.archtemplate.core.designsystem.component.rememberTabsViewSta
 import morz.example.archtemplate.core.designsystem.theme.AppTheme
 import morz.example.archtemplate.core.model.ToDo
 import morz.example.archtemplate.core.ui.DevicePreviews
+import morz.example.archtemplate.core.resources.R
+import morz.example.archtemplate.core.ui.todo.ToDoItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -209,53 +209,6 @@ fun ToDoGrid(
         },
         modifier = Modifier.fillMaxSize()
     )
-}
-
-@Composable
-fun ToDoItem(
-    todo: ToDo,
-    onItemClick: (Int) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-            .clickable { onItemClick(todo.id!!) },
-        shape = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.cardElevation(8.dp)
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Column {
-                Text(
-                    text = "To Do #${todo.id}",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = todo.todo ?: "",
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            }
-            Image(
-                painter =
-                    painterResource(
-                        if (todo.completed ?: false)
-                            R.drawable.ic_completed
-                        else
-                            R.drawable.ic_not_completed,
-                    ),
-                contentDescription = "todo status image",
-                modifier = Modifier.size(40.dp)
-            )
-        }
-    }
 }
 
 @Composable
