@@ -4,7 +4,7 @@ A modern to-do list application for Android, built with best practices in mind, 
 
 ## **Features**
 
-* **Task Management**: Add, edit, and delete to-do items.  
+* **Task Management**: Add, edit, search, and delete to-do items.  
 * **Modern UI**: Built with Jetpack Compose for a declarative and intuitive user interface.  
 * **Data Persistence**: Uses a local database to store tasks (coming soon).
 
